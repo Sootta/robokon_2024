@@ -4,12 +4,12 @@
 
 //サーボ
 Servo myServo;
-const int SERVO_PIN = 18;
+const int SERVO_PIN = 32;
 int servo_deg = 90;
 
 //右のモーター
-const int DIR_PIN = 21;
-const int PWM_PIN = 26;
+const int DIR_PIN = 23;
+const int PWM_PIN = 13;
 
 void setup() {
   Serial.begin(9600);
