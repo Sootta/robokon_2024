@@ -60,12 +60,20 @@ void loop() {
         delay(100);
     }
 
-    if(abs(right_moter)>10 || abs(left_moter)>10){
-        ledcWrite(3, abs(right_moter));
-        ledcWrite(4, abs(left_moter));
+    if(abs(right_moter)>30){
+        ledcWrite(3, abs(right_moter / 2));
         digitalWrite(RIGHT_DIR_PIN, right_moter > 0 ? HIGH:LOW);
+    }
+    else{
+        ledcWrite(3, 0);
+    }
+
+    if(abs(left_moter)>30){
+        ledcWrite(4, abs(left_moter / 2));
         digitalWrite(LEFT_DIR_PIN, left_moter > 0 ? LOW:HIGH);
+    }
+    else{
+        ledcWrite(4, 0);
     }
     delay(100);
 }
-
