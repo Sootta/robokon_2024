@@ -34,11 +34,12 @@ void setup() {
 }
 
 void loop() {
-    if(!PS4.isConnected()){
+    if(!PS4.isConnected() || PS4.PSButton()){
         ledcWrite(3,0);
         ledcWrite(4,0);
         return;
     }
+
     int right_moter = PS4.RStickY();
     int left_moter = PS4.LStickY();
 
@@ -59,12 +60,12 @@ void loop() {
         delay(100);
     }
 
-    ledcWrite(3, abs(right_moter));
-    ledcWrite(4, abs(left_moter));
-
-    digitalWrite(RIGHT_DIR_PIN, right_moter > 0 ? HIGH:LOW);
-    digitalWrite(LEFT_DIR_PIN, left_moter > 0 ? LOW:HIGH);
-
+    if(abs(right_moter)>10 || abs(left_moter)>10){
+        ledcWrite(3, abs(right_moter));
+        ledcWrite(4, abs(left_moter));
+        digitalWrite(RIGHT_DIR_PIN, right_moter > 0 ? HIGH:LOW);
+        digitalWrite(LEFT_DIR_PIN, left_moter > 0 ? LOW:HIGH);
+    }
     delay(100);
 }
 
