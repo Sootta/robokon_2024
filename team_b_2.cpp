@@ -4,16 +4,17 @@
 
 //サーボ
 Servo ServoRight, ServoLeft;
-const int RIGHT_SERVO_PIN = 25;
-const int LEFT_SERVO_PIN = 26;
+const int RIGHT_SERVO_PIN = 18;
+const int LEFT_SERVO_PIN = 19;
 //右のモーター
 const int RIGHT_DIR_PIN = 21;
-const int RIGHT_PWM_PIN = 0;
+const int RIGHT_PWM_PIN = 26;
 //左のモーター
-const int LEFT_DIR_PIN = 21;
-const int LEFT_PWM_PIN = 2;
+const int LEFT_DIR_PIN = 22;
+const int LEFT_PWM_PIN = 27;
 
-int servo_deg = 90;
+int servo_deg_right = 90;
+int servo_deg_left = 90;
 
 void setup() {
     Serial.begin(9600);
@@ -30,8 +31,6 @@ void setup() {
     ledcAttachPin(RIGHT_PWM_PIN, 3);
     ledcAttachPin(LEFT_PWM_PIN, 4);
 
-    ServoRight.write(90);
-    ServoLeft.write(90);
 }
 
 void loop() {
@@ -44,15 +43,19 @@ void loop() {
     int left_moter = PS4.LStickY();
 
     if(PS4.Circle()){
-        servo_deg++;
-        ServoRight.write(servo_deg);
-        ServoLeft.write(servo_deg);
+        Serial.println("p");
+        servo_deg_right += 10;
+        servo_deg_left -= 10;
+        ServoRight.write(servo_deg_right);
+        ServoLeft.write(servo_deg_left);
         delay(100);
     }
     else if(PS4.Cross()){
-        servo_deg--;
-        ServoRight.write(servo_deg);
-        ServoLeft.write(servo_deg);
+        Serial.println("m");
+        servo_deg_right -= 10;
+        servo_deg_left += 10;
+        ServoRight.write(servo_deg_right);
+        ServoLeft.write(servo_deg_left);
         delay(100);
     }
 
