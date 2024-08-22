@@ -41,21 +41,31 @@ void loop() {
   int lspeed = PS4.L2Value();
   
   if(PS4.Circle()){
-    servo_dir = !(servo_dir);
+    servo_dir = !servo_dir;
     myServo.write(servo_dir ? 90:10);
     delay(500);
   }
 
   if(PS4.Triangle()){
-    moter_dir = !(moter_dir);
+    moter_dir = !moter_dir;
     delay(500);
   }  
- 
-  ledcWrite(6, rspeed);
-  ledcWrite(7, lspeed);
-  digitalWrite(RDIR_PIN, moter_dir ? HIGH:LOW);
-  digitalWrite(LDIR_PIN, moter_dir ? LOW:HIGH);
 
-  Serial.println(rspeed);
+  if(abs(rspeed) > 30){
+    ledcWrite(6, rspeed);
+    digitalWrite(RDIR_PIN, moter_dir ? HIGH:LOW);
+  }
+  else{
+    ledcWrite(6, 0);
+  }
+  if(abs(lspeed) > 30){
+    ledcWrite(7, lspeed);
+    digitalWrite(LDIR_PIN, moter_dir ? LOW:HIGH);
+  }
+  else{
+    ledcWrite(7, 0);
+  }
+
+
   delay(100);
 }
