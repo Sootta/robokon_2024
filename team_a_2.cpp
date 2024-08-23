@@ -4,30 +4,37 @@
 #include <ESP32Encoder.h>
 
 Servo myServo;
-const int SERVO_PIN = 4;
+const unsigned char SERVO_PIN = 4;
 bool servo_dir = true;
 
 //跳ばすモーター２つ
-const int THR_RIGHT_DIR_PIN = 18;
-const int THR_RIGHT_PWM_PIN = 0;
-const int THR_LEFT_DIR_PIN = 19;
-const int THR_LEFT_PWM_PIN = 2;
+const unsigned char THR_RIGHT_DIR_PIN = 23;
+const unsigned char THR_RIGHT_PWM_PIN = 13;
+const unsigned char THR_LEFT_DIR_PIN = 19;
+const unsigned char THR_LEFT_PWM_PIN = 14;
 bool moter_dir = true;
 
 //車輪のモーター２つ
-const int RIGHT_DIR_PIN;
-const int RIGHT_PWM_PIN;
-const int LEFT_DIR_PIN;
-const int LEFT_PWM_PIN;
+const unsigned char RIGHT_DIR_PIN = 21;
+const unsigned char RIGHT_PWM_PIN = 26;
+const unsigned char LEFT_DIR_PIN = 22;
+const unsigned char LEFT_PWM_PIN = 27;
 
 //ロリコン
-ESP32Encoder encoder;
-const int A_PIN;
-const int B_PIN;
-const int X_PIN;
-int count = 0;
-void handleIndexPulse() {
-  encoder.clearCount();
+ESP32Encoder encoderRight, encoderLeft;
+const unsigned char RIGHT_A_PIN = 35;
+const unsigned char RIGHT_B_PIN = 34;
+const unsigned char RIGHT_X_PIN = 32;
+
+const unsigned char LEFT_A_PIN = 4;
+const unsigned char LEFT_B_PIN = 33;
+const unsigned char LEFT_X_PIN = 18;
+
+void handleIndexPulseRight() {
+  encoderRight.clearCount();
+}
+void handleIndexPulseLeft(){
+  encoderLeft.clearCount();
 }
 
 void setup() {
@@ -51,9 +58,10 @@ void setup() {
   ledcAttachPin(THR_LEFT_PWM_PIN, 7);
   
   //ロリコン
-  pinMode(X_PIN, INPUT_PULLUP);
-  encoder.attachSingleEdge(A_PIN, B_PIN);
-  attachInterrupt(digitalPinToInterrupt(X_PIN), handleIndexPulse, RISING); //割り込み
+  pinMode(RIGHT_X_PIN, INPUT_PULLUP);
+  encoderRight.attachSingleEdge(RIGHT_A_PIN, RIGHT_B_PIN);
+  attachInterrupt(digitalPinToInterrupt(RIGHT_X_PIN), handleIndexPulseRight, RISING); //割り込み
+  attachInterrupt(digitalPinToInterrupt(LEFT_X_PIN), handleIndexPulseLeft, RISING); 
 
   PS4.begin("08:b6:1F:ed:54:40");
   Serial.println("Ready!");
@@ -62,7 +70,8 @@ void setup() {
 }
 
 void loop() {
-  int64_t count = encoder.getCount();
+  int64_t count_right = encoderRight.getCount();
+  int64_t count_left = encoderLeft.getCount();
 
   if(!PS4.isConnected()) {
     ledcWrite(4, 0);
