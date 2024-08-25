@@ -4,43 +4,47 @@
 #include <ESP32Encoder.h>
 
 Servo myServo;
-const unsigned char SERVO_PIN = 4;
+const int SERVO_PIN = 4;
 bool servo_dir = true;
 
 //跳ばすモーター２つ
-const unsigned char THR_RIGHT_DIR_PIN = 23;
-const unsigned char THR_RIGHT_PWM_PIN = 13;
-const unsigned char THR_LEFT_DIR_PIN = 19;
-const unsigned char THR_LEFT_PWM_PIN = 14;
+const int THR_RIGHT_DIR_PIN = 23;
+const int THR_RIGHT_PWM_PIN = 13;
+const int THR_LEFT_DIR_PIN = 19;
+const int THR_LEFT_PWM_PIN = 14;
 bool moter_dir = true;
 
 //車輪のモーター２つ
-const unsigned char RIGHT_DIR_PIN = 21;
-const unsigned char RIGHT_PWM_PIN = 26;
-const unsigned char LEFT_DIR_PIN = 22;
-const unsigned char LEFT_PWM_PIN = 27;
+const int RIGHT_DIR_PIN = 21;
+const int RIGHT_PWM_PIN = 26;
+const int LEFT_DIR_PIN = 22;
+const int LEFT_PWM_PIN = 27;
 
 //ロリコン
 ESP32Encoder encoderRight, encoderLeft;
-const unsigned char RIGHT_A_PIN = 35;
-const unsigned char RIGHT_B_PIN = 34;
-const unsigned char RIGHT_X_PIN = 32;
+const int RIGHT_A_PIN = 35;
+const int RIGHT_B_PIN = 34;
+const int RIGHT_X_PIN = 32;
 
-const unsigned char LEFT_A_PIN = 4;
-const unsigned char LEFT_B_PIN = 33;
-const unsigned char LEFT_X_PIN = 18;
+const int LEFT_A_PIN = 4;
+const int LEFT_B_PIN = 33;
+const int LEFT_X_PIN = 18;
+
+int right_count;
+int left_count;
 
 void handleIndexPulseRight() {
   encoderRight.clearCount();
+  right_count++;
 }
 void handleIndexPulseLeft(){
   encoderLeft.clearCount();
+  left_count++;
 }
 
 void setup() {
   Serial.begin(9600);
  
-  myServo.attach(SERVO_PIN);
   //車輪のモーター２つ
   pinMode(THR_RIGHT_DIR_PIN, OUTPUT);
   pinMode(THR_LEFT_DIR_PIN, OUTPUT);
@@ -62,16 +66,16 @@ void setup() {
   encoderRight.attachSingleEdge(RIGHT_A_PIN, RIGHT_B_PIN);
   attachInterrupt(digitalPinToInterrupt(RIGHT_X_PIN), handleIndexPulseRight, RISING); //割り込み
   attachInterrupt(digitalPinToInterrupt(LEFT_X_PIN), handleIndexPulseLeft, RISING); 
+  right_count = 0;
+  left_count = 0;
 
-  PS4.begin("08:b6:1F:ed:54:40");
-  Serial.println("Ready!");
+  PS4.begin("48:E7:29:A3:C4:B8");
 
+  myServo.attach(SERVO_PIN);
   myServo.write(90);
 }
 
 void loop() {
-  int64_t count_right = encoderRight.getCount();
-  int64_t count_left = encoderLeft.getCount();
 
   if(!PS4.isConnected()) {
     ledcWrite(4, 0);
@@ -80,6 +84,8 @@ void loop() {
     ledcWrite(7, 0);
     return;
   }
+  int64_t count_right = encoderRight.getCount();
+  int64_t count_left = encoderLeft.getCount();
 
   int rspeed = PS4.R2Value();
   int lspeed = PS4.L2Value();
