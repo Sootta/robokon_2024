@@ -2,6 +2,8 @@
 #include <PS4Controller.h>
 #include <ESP32Servo.h>
 
+const int MONIROR_SPEED = 9600;
+
 //サーボ
 Servo ServoRight, ServoLeft;
 const int RIGHT_SERVO_PIN = 18;
@@ -12,12 +14,12 @@ const int RIGHT_PWM_PIN = 26;
 //左のモーター
 const int LEFT_DIR_PIN = 22;
 const int LEFT_PWM_PIN = 27;
-
-int servo_deg_right = 90;
-int servo_deg_left = 90;
+//サーボの初めの角度(degree)
+int servo_deg_right = 135;
+int servo_deg_left = 45;
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(MONIROR_SPEED);
     PS4.begin("08:b6:1F:ed:54:40");
 
     ServoRight.attach(RIGHT_SERVO_PIN);
@@ -31,6 +33,8 @@ void setup() {
     ledcAttachPin(RIGHT_PWM_PIN, 3);
     ledcAttachPin(LEFT_PWM_PIN, 4);
 
+    ServoRight.write(servo_deg_right);
+    ServoLeft.write(servo_deg_left);
 }
 
 void loop() {
@@ -44,7 +48,6 @@ void loop() {
     int left_moter = PS4.LStickY();
 
     if(PS4.Circle()){
-        Serial.println("p");
         servo_deg_right += 10;
         servo_deg_left -= 10;
         ServoRight.write(servo_deg_right);
@@ -52,7 +55,6 @@ void loop() {
         delay(100);
     }
     else if(PS4.Cross()){
-        Serial.println("m");
         servo_deg_right -= 10;
         servo_deg_left += 10;
         ServoRight.write(servo_deg_right);
@@ -61,19 +63,13 @@ void loop() {
     }
 
     if(abs(right_moter)>30){
-        ledcWrite(3, abs(right_moter / 2));
+        ledcWrite(3, abs(right_moter));
         digitalWrite(RIGHT_DIR_PIN, right_moter > 0 ? HIGH:LOW);
     }
-    else{
-        ledcWrite(3, 0);
-    }
-
     if(abs(left_moter)>30){
-        ledcWrite(4, abs(left_moter / 2));
+        ledcWrite(4, abs(left_moter));
         digitalWrite(LEFT_DIR_PIN, left_moter > 0 ? LOW:HIGH);
-    }
-    else{
-        ledcWrite(4, 0);
     }
     delay(100);
 }
+
