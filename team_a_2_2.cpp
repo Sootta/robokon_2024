@@ -17,10 +17,12 @@ bool moter_dir = true;
 //車輪のモーター２つ
 const int RIGHT_DIR_PIN = 21;
 const int RIGHT_PWM_PIN = 26;
+
 const int LEFT_DIR_PIN = 22;
 const int LEFT_PWM_PIN = 27;
 
 //ロリコン
+/*
 ESP32Encoder encoderRight, encoderLeft;
 const int RIGHT_A_PIN = 35;
 const int RIGHT_B_PIN = 34;
@@ -29,10 +31,11 @@ const int RIGHT_X_PIN = 32;
 const int LEFT_A_PIN = 4;
 const int LEFT_B_PIN = 33;
 const int LEFT_X_PIN = 18;
+*/
 
-int right_count;
-int left_count;
-
+//int right_count;
+//int left_count;
+/*
 void handleIndexPulseRight() {
   encoderRight.clearCount();
   right_count++;
@@ -41,13 +44,13 @@ void handleIndexPulseLeft(){
   encoderLeft.clearCount();
   left_count++;
 }
-
+*/
 void setup() {
   Serial.begin(9600);
  
   //車輪のモーター２つ
-  pinMode(THR_RIGHT_DIR_PIN, OUTPUT);
-  pinMode(THR_LEFT_DIR_PIN, OUTPUT);
+  pinMode(RIGHT_DIR_PIN, OUTPUT);
+  pinMode(LEFT_DIR_PIN, OUTPUT);
   ledcSetup(4, 4000, 8);
   ledcSetup(5, 4000, 8);
   ledcAttachPin(RIGHT_PWM_PIN, 4);
@@ -62,12 +65,12 @@ void setup() {
   ledcAttachPin(THR_LEFT_PWM_PIN, 7);
   
   //ロリコン
-  pinMode(RIGHT_X_PIN, INPUT_PULLUP);
+  /*  pinMode(RIGHT_X_PIN, INPUT_PULLUP);
   encoderRight.attachSingleEdge(RIGHT_A_PIN, RIGHT_B_PIN);
   attachInterrupt(digitalPinToInterrupt(RIGHT_X_PIN), handleIndexPulseRight, RISING); //割り込み
   attachInterrupt(digitalPinToInterrupt(LEFT_X_PIN), handleIndexPulseLeft, RISING); 
   right_count = 0;
-  left_count = 0;
+  left_count = 0;*/
 
   PS4.begin("48:E7:29:A3:C4:B8");
 
@@ -84,11 +87,9 @@ void loop() {
     ledcWrite(7, 0);
     return;
   }
-  int64_t count_right = encoderRight.getCount();
-  int64_t count_left = encoderLeft.getCount();
-
-  int rspeed = PS4.R2Value();
-  int lspeed = PS4.L2Value();
+  
+  //int64_t count_right = encoderRight.getCount();
+  //int64_t count_left = encoderLeft.getCount();
 
   int right_moter = PS4.RStickY();
   int left_moter = PS4.LStickY();
@@ -96,6 +97,7 @@ void loop() {
   if(PS4.Circle()){
     servo_dir = !servo_dir;
     myServo.write(servo_dir ? 90:10);
+    Serial.println(servo_dir ? 90:10);
     delay(500);
   }
 
@@ -117,24 +119,25 @@ void loop() {
   }
 
   //跳ばすモーター-------------------------------------------------------------
-  if(PS4.Triangle()){
-    moter_dir = !moter_dir;
-    delay(500);
-  }  
+  int rspeed = map(PS4.R2Value(), 0, 255, 0, 100);
+  int lspeed = map(PS4.L2Value(), 0, 255, 0, 100);
 
   if(abs(rspeed) > 30){
     ledcWrite(6, rspeed);
-    digitalWrite(THR_RIGHT_DIR_PIN, moter_dir ? HIGH:LOW);
+    digitalWrite(THR_RIGHT_DIR_PIN, LOW);
+
+    ledcWrite(7, rspeed);
+    digitalWrite(THR_LEFT_DIR_PIN, HIGH);
+  }
+  else if(abs(lspeed) > 30){
+    ledcWrite(6, lspeed);
+    digitalWrite(THR_RIGHT_DIR_PIN, HIGH);
+
+    ledcWrite(7, lspeed);
+    digitalWrite(THR_LEFT_DIR_PIN, LOW);
   }
   else{
     ledcWrite(6, 0);
-  }
-
-  if(abs(lspeed) > 30){
-    ledcWrite(7, lspeed);
-    digitalWrite(THR_LEFT_DIR_PIN, moter_dir ? LOW:HIGH);
-  }
-  else{
     ledcWrite(7, 0);
   }
 
