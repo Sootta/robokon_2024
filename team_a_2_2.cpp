@@ -21,6 +21,8 @@ const int RIGHT_PWM_PIN = 26;
 const int LEFT_DIR_PIN = 22;
 const int LEFT_PWM_PIN = 27;
 
+
+
 //ロリコン
 /*
 ESP32Encoder encoderRight, encoderLeft;
@@ -33,8 +35,8 @@ const int LEFT_B_PIN = 33;
 const int LEFT_X_PIN = 18;
 */
 
-//int right_count;
-//int left_count;
+int right_count;
+int left_count;
 /*
 void handleIndexPulseRight() {
   encoderRight.clearCount();
@@ -72,6 +74,7 @@ void setup() {
   right_count = 0;
   left_count = 0;*/
 
+
   PS4.begin("48:E7:29:A3:C4:B8");
 
   myServo.attach(SERVO_PIN);
@@ -104,7 +107,7 @@ void loop() {
   //車輪のモーター-------------------------------------------------------------
   if(abs(right_moter) > 30){
     ledcWrite(4, abs(right_moter));
-    digitalWrite(RIGHT_DIR_PIN, right_moter > 0 ? HIGH:LOW);
+    digitalWrite(RIGHT_DIR_PIN, right_moter > 0 ? LOW:HIGH);
   }
   else{
     ledcWrite(4, 0);
