@@ -21,8 +21,6 @@ const int RIGHT_PWM_PIN = 26;
 const int LEFT_DIR_PIN = 22;
 const int LEFT_PWM_PIN = 27;
 
-
-
 //ロリコン
 /*
 ESP32Encoder encoderRight, encoderLeft;
@@ -73,7 +71,6 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(LEFT_X_PIN), handleIndexPulseLeft, RISING); 
   right_count = 0;
   left_count = 0;*/
-
 
   PS4.begin("48:E7:29:A3:C4:B8");
 
