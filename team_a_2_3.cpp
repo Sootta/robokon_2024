@@ -5,17 +5,17 @@
 
 const int SERIAL_SPEED = 9600;
 
-const unsigned char PWM_RESOLUTION = 8;
+const int PWM_RESOLUTION = 8;
 
-const unsigned char RIGHT_DIR_PIN;
-const unsigned char RIGHT_PWM_PIN;
-const unsigned char LEFT_DIR_PIN;
-const unsigned char LEFT_PWM_PIN;
+const int RIGHT_DIR_PIN = 21;
+const int RIGHT_PWM_PIN = 26;
+const int LEFT_DIR_PIN = 22;
+const int LEFT_PWM_PIN = 27;
 
-const unsigned char THR_DIR_PIN;
-const unsigned char THE_PWM_PIN;
+const int THR_DIR_PIN = 23;
+const int THE_PWM_PIN = 13;
 
-const unsigned char SERVO_PIN;
+const int SERVO_PIN = 32;
 Servo myServo;
 int deg = 90;
 
@@ -35,6 +35,7 @@ void setup() {
     ledcAttachPin(THE_PWM_PIN, 3);
 
     myServo.attach(SERVO_PIN);
+    myServo.write(deg);
 }
 
 void loop() {
