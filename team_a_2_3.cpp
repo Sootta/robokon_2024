@@ -59,11 +59,11 @@ void loop() {
 
     if(PS4.R2Value() > 30){
         digitalWrite(THR_DIR_PIN, HIGH);
-        ledcWrite(3, PS4.R2Value());
+        ledcWrite(3, PS4.R2Value() / 2);
     }
     else if(PS4.L2Value() > 30){
         digitalWrite(THR_DIR_PIN, LOW);
-        ledcWrite(3, PS4.L2Value());
+        ledcWrite(3, PS4.L2Value() / 2);
     }
     else{
         ledcWrite(3, 0);
