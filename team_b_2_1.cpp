@@ -44,8 +44,8 @@ void loop() {
         return;
     }
 
-    int right_moter = PS4.RStickY();
-    int left_moter = PS4.LStickY();
+    int right_moter = map(PS4.RStickY(), -128, 128, -100, 100);
+    int left_moter = map(PS4.LStickY(), -128, 128, -100, 100);
 
     if(PS4.Circle()){
         servo_deg_right += 10;
@@ -66,9 +66,16 @@ void loop() {
         ledcWrite(3, abs(right_moter));
         digitalWrite(RIGHT_DIR_PIN, right_moter > 0 ? HIGH:LOW);
     }
+    else{
+        ledcWrite(3, 0);
+    }
+    
     if(abs(left_moter)>30){
         ledcWrite(4, abs(left_moter));
         digitalWrite(LEFT_DIR_PIN, left_moter > 0 ? LOW:HIGH);
+    }
+    else{
+        ledcWrite(4, 0);
     }
     delay(100);
 }
