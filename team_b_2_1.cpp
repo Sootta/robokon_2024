@@ -47,16 +47,23 @@ void loop() {
     int right_moter = map(PS4.RStickY(), -128, 128, -100, 100);
     int left_moter = map(PS4.LStickY(), -128, 128, -100, 100);
 
-    if(PS4.Circle()){
+    if(PS4.Circle() && servo_deg_right < 135){
         servo_deg_right += 10;
         servo_deg_left -= 10;
         ServoRight.write(servo_deg_right);
         ServoLeft.write(servo_deg_left);
         delay(100);
     }
-    else if(PS4.Cross()){
+    else if(PS4.Cross() && servo_deg_right > 60){
         servo_deg_right -= 10;
         servo_deg_left += 10;
+        ServoRight.write(servo_deg_right);
+        ServoLeft.write(servo_deg_left);
+        delay(100);
+    }
+    else if(PS4.Triangle()){
+        servo_deg_right = 135;
+        servo_deg_left = 45;
         ServoRight.write(servo_deg_right);
         ServoLeft.write(servo_deg_left);
         delay(100);
